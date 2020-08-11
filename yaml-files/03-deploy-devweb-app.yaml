@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: internal-app
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devwebapp
+  labels:
+    app: devwebapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devwebapp
+  template:
+    metadata:
+      labels:
+        app: devwebapp
+    spec:
+      serviceAccountName: internal-app
+      containers:
+      - name: app
+        image: burtlo/devwebapp-ruby:k8s
+        imagePullPolicy: Always
+        env:
+        - name: VAULT_ADDR
+          value: "http://172.42.42.200:8200"
+

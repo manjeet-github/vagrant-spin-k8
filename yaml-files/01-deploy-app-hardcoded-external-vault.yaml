@@ -1,0 +1,31 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app1-hardcoded-external-vault
+  labels:
+    app: app1-hardcoded-external-vault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app1-hardcoded-external-vault
+  template:
+    metadata:
+      labels:
+        app: app1-hardcoded-external-vault
+    spec:
+      serviceAccountName: vault-auth
+      containers:
+        - name: app1
+          image: "kawsark/vault-example-init:0.0.7"
+          imagePullPolicy: Always
+          env:
+            - name: VAULT_ADDR
+              value: "http://172.42.42.200:8200"
+            - name: VAULT_ROLE
+              value: "app1-role"
+            - name: SECRET_KEY
+              value: "secret/app1"
+            - name: VAULT_LOGIN_PATH
+              value: "auth/kubernetes/login"
